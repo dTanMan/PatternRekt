@@ -11,18 +11,6 @@ height = 32
 num_rows = width*height
 num_cols = (3*num_rows) - 1
 
-def zeroes_and_ones(img):
-    bipolar = []
-    for row in range(new_img.shape[0]):
-        for col in range(new_img.shape[1]):
-            val = new_img[row,col]
-            if val == 0:
-                bipolar_vector.append(0)
-            else:
-                bipolar_vector.append(1)
-				
-	cv2.imshow('bnw',new_img)
-    return bipolar_vector
 
 # Input: Image
 # Output: Bipolar Vector
@@ -33,6 +21,9 @@ def get_bipolar_vector (img):
     # print th2
     # new_img = bwmorph_thin(zeroes_and_ones(th2))
     new_img = th2
+	
+    cv2.imshow('bnw',new_img)
+	
     bipolar_vector = []
     for row in range(new_img.shape[0]):
         for col in range(new_img.shape[1]):
@@ -41,8 +32,11 @@ def get_bipolar_vector (img):
                 bipolar_vector.append(-1)
             else:
                 bipolar_vector.append(1)
-				
-	cv2.imshow('bnw',new_img)
+	# print new_img
+    contours, hierarchy, X = cv2.findContours(new_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+	
+    print contours
+
     return bipolar_vector
 
 # Input: Bipolar Vector
