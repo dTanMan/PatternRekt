@@ -110,8 +110,8 @@ def bwmorph_thin(image, n_iter=None):
     
     if skel.ndim != 2:
         raise ValueError('2D array required')
-    if not np.all(np.in1d(image.flat,(0,1))):
-        raise ValueError('Image contains values other than 0 and 1')
+    # if not np.all(np.in1d(image.flat,(0,1))):
+        # raise ValueError('Image contains values other than 0 and 1')
 
     # neighborhood mask
     mask = np.array([[ 8,  4,  2],
@@ -140,7 +140,7 @@ def bwmorph_thin(image, n_iter=None):
         # count down to iteration limit (or endlessly negative)
         n -= 1
     
-    return skel.astype(np.bool)
+    return skel.astype(np.uint8)
     
 """
 # here's how to make the LUTs
