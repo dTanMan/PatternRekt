@@ -1,7 +1,4 @@
-[[1 1 1 ..., 1 1 1]
- [1 1 1 ..., 1 1 1]
- [1 1 1 ..., 1 1 1]
- ..., 
- [1 1 1 ..., 1 1 1]
- [1 1 1 ..., 1 1 1]
- [1 1 1 ..., 1 1 1]]
+Which would you like to perform? (Input 1, 2 or 3)
+[1] Supervised Daydreaming (Part 1)
+[2] Unsupervised Daydreaming (Part 2)
+[3] Exit
