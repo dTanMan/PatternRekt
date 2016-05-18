@@ -29,6 +29,7 @@ class bam:
     def feedForward(self, input, stochastic=True):
         if self.continuous:
             input.append(self.master_bias_in)
+            self.weight_matrix.append( [1 for i in range(len(input[0]))] )
             
         result = ( np.mat(input) * np.mat(self.weight_matrix) ).tolist()[0]
 
@@ -42,13 +43,15 @@ class bam:
         
         if self.continuous:
             input = input[:-1]
-            
+            self.weight_matrix = self.weight_matrix[:-1]
         return result
         
     def feedBackward(self, output, stochastic=True):
         if self.continuous:
             output.append(self.master_bias_out)
-            
+            for row in input:
+                row.append(1)
+                
         result = ( np.mat(output) * np.mat(zip(*self.weight_matrix)) ).tolist()[0]
         
         if self.continuous: 
@@ -61,6 +64,8 @@ class bam:
                 
         if self.continuous:
             output = output[:-1]
+            for row in input:
+                row = row[:-1]
             
         return result
     
