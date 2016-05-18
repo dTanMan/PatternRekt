@@ -2,8 +2,10 @@ import cv2, sys
 from bam import *
 from training import *
 
-num_rows = 135000
-num_cols = 60
+width = 100
+height = 100
+num_rows = width*height
+num_cols = 5
 
 TRAINING_DIR = 'input/training_set/'
 DREAMING_DIR = 'input/dreaming_set/'
@@ -34,6 +36,8 @@ def dream(dreaming_set, b, print_events = False, max_iter_count = 20, part_two=F
 
         bp = get_bipolar_vector(image)
         
+        d = 0
+        
         while True:
             if print_events:
                 print "Dreaming iteration: " + str(iter_count)
@@ -54,7 +58,7 @@ def dream(dreaming_set, b, print_events = False, max_iter_count = 20, part_two=F
             if distance(bp_new, bp) < 1:
                 if print_events:
                     print "Dreaming: Distance is less than 1 - done!"
-                #convert_to_image(bp, 'Dream Result: ' + str(iter_count))
+                # convert_to_image(bp, 'Dream Result: ' + str(iter_count))
                 break
             elif iter_count==max_iter_count:
                 if print_events:
@@ -65,6 +69,10 @@ def dream(dreaming_set, b, print_events = False, max_iter_count = 20, part_two=F
                 bp = bp_new
                 iter_count += 1
         print "Displaying image:"
+        bp = map(lambda x: x*255, bp)
+        print "new image:"
+        # print bp
+        print "Distance:", d
         convert_to_image(bp, 'Dream Result: ' + str(image_count), True)
         if part_two:
             return
