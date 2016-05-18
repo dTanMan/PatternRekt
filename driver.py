@@ -2,8 +2,10 @@ import cv2, sys
 from bam import *
 from training import *
 
-num_rows = 135000
-num_cols = 60
+width = 32
+height = 32
+num_rows = width*height
+num_cols = 5
 
 TRAINING_DIR = 'input/training_set/'
 DREAMING_DIR = 'input/dreaming_set/'

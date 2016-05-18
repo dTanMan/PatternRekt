@@ -3,10 +3,10 @@ from bam import *
 from training import *
 from bwmorph_thin import *
 
-TRAINING_DIR = 'letters/A/'
+TRAINING_DIR = 'input/training_set/'
 
-width = 32
-height = 32
+width = 100
+height = 100
 num_rows = width*height
 num_cols = num_rows*3 - 1
 
@@ -91,7 +91,7 @@ def thin (img):
 	x = bwmorph_thin(image)
 	new_image = zero_one_to_image(x)
 	return new_image
-	# cv2.imshow('zero one', x)
+	cv2.imshow('zero one', x)
 	
 def get_bipolar_vector (img):
 	cv2.imshow('orig', img)
@@ -100,20 +100,21 @@ def get_bipolar_vector (img):
 	
 	cv2.imshow('wb', th2)
 	
-	thinned_image = thin(th2)
+	# thinned_image = thin(th2)
+	thinned_image = th2
 	
 	get_features(thinned_image)
 	
 	bipolar_vector = []
 	for row in range(th2.shape[0]):
 		for col in range(th2.shape[1]):
-			val = th2[row,col]
+			val = thinned_image[row,col]
 			if val == 0:
 				bipolar_vector.append(-1)
 			else:
 				bipolar_vector.append(1)
 				
-	# cv2.imshow('bnw',th2)
+	cv2.imshow('bnw',th2)
 	return bipolar_vector
 	
 training_set = load_images_from_folder (TRAINING_DIR)

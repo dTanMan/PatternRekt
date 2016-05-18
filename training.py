@@ -2,13 +2,14 @@ import cv2
 import os
 import numpy as np
 from bam import *
+from bwmorph_thin import *
 
 TRAINING_DIR = 'input/training_set/'
 
-width = 450
-height = 300
-num_rows = 135000
-num_cols = 60
+width = 32
+height = 32
+num_rows = width*height
+num_cols = 5
 
 # Input: Image
 # Output: Tuple with the features
@@ -39,10 +40,12 @@ def get_features (img):
     character_width = right_bound_col - left_bound_col
     
     center_row = ( character_height/2 ) + top_bound_row
-    print center_row
+    center_col = ( character_width/2 ) + left_bound_col
+    # print center_row
     
-    total_pixels = 0
+    total_pixels = 1
     upper_pixels = 0
+    right_pixels = 0
     
     for row in range(img.shape[0]):
         for col in range(img.shape[1]):
@@ -50,18 +53,20 @@ def get_features (img):
             if val==0:
                 if row<=center_row:
                     upper_pixels+=1
+                if col>=center_col:
+                    right_pixels+=1
                 total_pixels+=1
-                
-    
-    cv2.imshow('bounds', img)
-    
+
+
+    # cv2.imshow('bounds', img)
+    height_ratio = character_height*1.0 / height
     height_width_ratio = character_height*1.0 / character_width
     upper_ratio = upper_pixels*1.0 / total_pixels
+    right_ratio = right_pixels*1.0 / total_pixels
     
-    print character_height, character_width, height_width_ratio
-    
-    print upper_pixels, total_pixels, upper_ratio
-    return (height_width_ratio, upper_ratio)
+    features = [height_width_ratio, upper_ratio, height_ratio, right_ratio, total_pixels]
+    # print features
+    return features
 
 # Input: Array of arrays of 0 (white) and 1 (black)
 # Output: The array converted into an image (0 becomes 255, 1 becomes 0)
@@ -73,7 +78,7 @@ def zero_one_to_image (arr):
                 image_vector[row, col] = 255
             else:
                 image_vector[row, col] = 0
-    cv2.imshow('zero one', image_vector)
+    # cv2.imshow('zero one', image_vector)
     return image_vector
     
 # Input: Image
@@ -91,6 +96,7 @@ def thin (img):
                 
         image.append(v)
     x = bwmorph_thin(image)
+    # x = image	
     new_image = zero_one_to_image(x)
     return new_image
 
@@ -99,6 +105,9 @@ def thin (img):
 def get_bipolar_vector (img):
     img = cv2.resize(img, (width, height))
     ret2, th2 = cv2.threshold(img,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    # thinned_image = thin(th2)
+    thinned_image = th2
+	
     bipolar_vector = []
     for row in range(th2.shape[0]):
         for col in range(th2.shape[1]):
@@ -139,6 +148,7 @@ def load_images_from_folder (folder):
 
 def convert_to_image (bp, st, show_image=False):
     new_image = get_image(bp)
+    # new_image = cv2.resize(new_image, (300, 300))
     if show_image:
         cv2.imshow(st, np.mat(new_image))
 
@@ -153,34 +163,38 @@ def distance(a, b):
 # Input: A single image and BAM instance
 # Output: Last label of the processed image
 def get_last_label(image, b, max_iter_count = 10):
-    print "Get_Last_Label: Beginning"
-    bp = get_bipolar_vector(image)        
-    total_differences = 0
-    total_distance = 0.0
-    iter_count = 1
+    # print "Get_Last_Label: Beginning"
+    # bp = get_bipolar_vector(image)        
+    # total_differences = 0
+    # total_distance = 0.0
+    # iter_count = 1
     
-    while True:
-        bp_prime = b.feedForward(bp)
-        bp_new = b.feedBackward(bp_prime)        
-        count = 0 # Number of elements that changed
-        for i in zip(bp, bp_new):
-            if i[0] != i[1]:
-                count += 1       
+    # while True:
+        # bp_prime = b.feedForward(bp)
+        # bp_new = b.feedBackward(bp_prime)        
+        # count = 0 # Number of elements that changed
+        # for i in zip(bp, bp_new):
+            # if i[0] != i[1]:
+                # count += 1       
         # Numerically determine how different they are based on euclidean dist.
-        d = distance(bp_new, bp)
-        if distance(bp_new, bp) < 1:
-            print "Get_Last_Label: Distance is less than 1 - done!"
-            break
-        elif iter_count==max_iter_count:
-            print "Get_Last_Label: Maximum iterations reached!"
-            break
-        else:
-            bp = bp_new
-            iter_count += 1
-        total_differences+=count
-        total_distance += d
-        
-    return bp_prime
+        # d = distance(bp_new, bp)
+        # if distance(bp_new, bp) < 1:
+            # print "Get_Last_Label: Distance is less than 1 - done!"
+            # break
+        # elif iter_count==max_iter_count:
+            # print "Get_Last_Label: Maximum iterations reached!"
+            # break
+        # else:
+            # bp = bp_new
+            # iter_count += 1
+        # total_differences+=count
+        # total_distance += d
+    
+    x =get_features (image)
+    # bp_prime.append(x)
+    return x
+    # return bp_prime
+    
 
 if __name__ == '__main__':
     images = load_images_from_folder (INPUT_DIR)
