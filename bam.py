@@ -29,7 +29,7 @@ class bam:
     def feedForward(self, input, stochastic=True):
         if self.continuous:
             input.append(self.master_bias_in)
-            self.weight_matrix.append( [1 for i in range(len(input[0]))] )
+            self.weight_matrix.append( [1 for i in range(len(self.weight_matrix[0]))] )
             
         result = ( np.mat(input) * np.mat(self.weight_matrix) ).tolist()[0]
 
@@ -49,7 +49,7 @@ class bam:
     def feedBackward(self, output, stochastic=True):
         if self.continuous:
             output.append(self.master_bias_out)
-            for row in input:
+            for row in self.weight_matrix:
                 row.append(1)
                 
         result = ( np.mat(output) * np.mat(zip(*self.weight_matrix)) ).tolist()[0]
@@ -64,7 +64,7 @@ class bam:
                 
         if self.continuous:
             output = output[:-1]
-            for row in input:
+            for row in self.weight_matrix:
                 row = row[:-1]
             
         return result
@@ -132,7 +132,10 @@ class bam:
     
     # gotten with te help of wolframalpha.com    
     def sigmoid(self, x):
-        return 1.0/(1+m.exp(-x))
+        try:
+            return 1.0/(1+m.exp(-x))
+        except OverflowError:
+            return 0
         
     # gotten with te help of wolframalpha.com
     def the_other_thing(self, x):
